@@ -85,8 +85,7 @@ class LogisticRegression:
         """
         torch.manual_seed(random_state)
         
-        params: torch.Tensor = None
-        
+        params: torch.Tensor = torch.rand(dim+1)
         return params
 
     @staticmethod
