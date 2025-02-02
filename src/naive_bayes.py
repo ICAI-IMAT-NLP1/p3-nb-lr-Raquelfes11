@@ -124,7 +124,8 @@ class NaiveBayes:
             raise Exception("Model not trained. Please call the train method first.")
         
         # TODO: Calculate log posteriors and obtain the class of maximum likelihood 
-        pred: int = None
+        log_posteriors : torch.Tensor = self.estimate_class_posteriors(feature)
+        pred: int = torch.argmax(log_posteriors).item()
         return pred
 
     def predict_proba(self, feature: torch.Tensor) -> torch.Tensor:
@@ -144,5 +145,8 @@ class NaiveBayes:
             raise Exception("Model not trained. Please call the train method first.")
 
         # TODO: Calculate log posteriors and transform them to probabilities (softmax)
-        probs: torch.Tensor = None
+        log_posteriors: torch.Tensor = self.estimate_class_posteriors(feature)
+        exps: torch.Tensor = torch.exp(log_posteriors) 
+        sum_exps: torch.Tensor = torch.sum(exps)  
+        probs: torch.Tensor = exps / sum_exps
         return probs
