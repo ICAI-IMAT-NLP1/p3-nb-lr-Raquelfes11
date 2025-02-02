@@ -7,7 +7,6 @@ try:
 except ImportError:
     from utils import SentimentExample, tokenize
 
-
 def read_sentiment_examples(infile: str) -> List[SentimentExample]:
     """
     Reads sentiment examples from a file.
@@ -26,12 +25,11 @@ def read_sentiment_examples(infile: str) -> List[SentimentExample]:
 
     for line in lines:
         info : List[str] = line.split("\t")
-        words: List[str] = tokenize(info[0])
+        words: List[str] = tokenize(info[0].lower())
         label: int = int(info[-1])
         examples.append(SentimentExample(words,label))
 
     return examples
-
 
 def build_vocab(examples: List[SentimentExample]) -> Dict[str, int]:
     """
@@ -58,7 +56,6 @@ def build_vocab(examples: List[SentimentExample]) -> Dict[str, int]:
 
     return vocab
 
-
 def bag_of_words(
     text: List[str], vocab: Dict[str, int], binary: bool = False
 ) -> torch.Tensor:
@@ -76,12 +73,11 @@ def bag_of_words(
     """
     # TODO: Converts list of words into BoW, take into account the binary vs full
     bow: torch.Tensor = torch.zeros(len(vocab))
-    for word in text:
-        if binary:
-            if word in vocab and bow[vocab[word]] != 1:
-                bow[vocab[word]] = 1
-        else:
-            if word in vocab:
-                bow[vocab[word]] += 1
+    print(len(bow))
+    print(len(vocab))
 
     return bow
+
+examples = read_sentiment_examples("data/sample_train.txt")
+vocab = build_vocab(examples)
+bag_of_words("HOLA",vocab)
