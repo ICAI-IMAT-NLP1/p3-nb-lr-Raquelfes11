@@ -81,7 +81,7 @@ class NaiveBayes:
             total_words_in_class: int = word_counts_in_class.sum() # num total de words in clase c
 
             probs: torch.Tensor = (word_counts_in_class + delta)/(total_words_in_class + delta*self.vocab_size)
-            class_word_counts[label] = probs
+            class_word_counts[label.item()] = probs
 
         return class_word_counts
 
