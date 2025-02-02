@@ -33,7 +33,28 @@ class LogisticRegression:
             None: The function updates the model weights in place.
         """
         # TODO: Implement gradient-descent algorithm to optimize logistic regression weights
-        return
+        params:torch.Tensor = self.initialize_parameters(features.shape[1],self.random_state)
+        self._weights = params
+        bias:torch.Tensor = params[-1]
+        weights:torch.Tensor = params[:-1]
+
+        for epoch in range(epochs):
+            grad_weights = torch.zeros_like(weights)
+            grad_bias = 0
+
+            for i in range(features.shape[0]):
+                prediction: torch.Tensor = self.predict(features[i])
+                error: int = prediction - labels[i]
+
+                grad_weights += error*features[i]
+                grad_bias += error
+
+            weights -= learning_rate*grad_weights / features.shape[0]
+            bias -= learning_rate*grad_bias / features.shape[0]
+
+            self._weights[:-1] = weights
+            self._weights[-1] = bias
+        return 
 
     def predict(self, features: torch.Tensor, cutoff: float = 0.5) -> torch.Tensor:
         """
@@ -122,7 +143,7 @@ class LogisticRegression:
         Returns:
             torch.Tensor: The computed binary cross-entropy loss.
         """
-        ce_loss: torch.Tensor = None
+        ce_loss: torch.Tensor = -torch.mean(targets * torch.log(predictions) + (1 - targets) * torch.log(1 - predictions))
         return ce_loss
 
     @property
