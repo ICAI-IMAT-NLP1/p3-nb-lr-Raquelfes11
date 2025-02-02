@@ -67,7 +67,11 @@ class LogisticRegression:
         Returns:
             torch.Tensor: Predicted class labels (0 or 1).
         """
-        decisions: torch.Tensor = None
+        z: torch.Tensor = torch.matmul(features,self._weights[:-1]) + self._weights[-1]
+        z_sigmoid:torch.Tensor = self.sigmoid(z)
+
+        decisions: torch.Tensor = (z_sigmoid >= cutoff).float()
+       
         return decisions
 
     def predict_proba(self, features: torch.Tensor) -> torch.Tensor:
@@ -86,7 +90,9 @@ class LogisticRegression:
         if self.weights is None:
             raise ValueError("Model not trained. Call the 'train' method first.")
         
-        probabilities: torch.Tensor = None
+        z: torch.Tensor = torch.matmul(features,self._weights[:-1]) + self._weights[-1]
+
+        probabilities: torch.Tensor = self.sigmoid(z)
         
         return probabilities
 
