@@ -29,9 +29,9 @@ class NaiveBayes:
             delta (float): Smoothing parameter for Laplace smoothing.
         """
         # TODO: Estimate class priors and conditional probabilities of the bag of words 
-        self.class_priors = None
-        self.vocab_size = None # Shape of the probability tensors, useful for predictions and conditional probabilities
-        self.conditional_probabilities = None
+        self.class_priors = self.estimate_class_priors(labels)
+        self.vocab_size = features.size(1) # Shape of the probability tensors, useful for predictions and conditional probabilities
+        self.conditional_probabilities = self.estimate_conditional_probabilities(features,labels,delta)
         return
 
     def estimate_class_priors(self, labels: torch.Tensor) -> Dict[int, torch.Tensor]:
@@ -62,17 +62,29 @@ class NaiveBayes:
         Estimates conditional probabilities of words given a class using Laplace smoothing.
 
         Args:
-            features (torch.Tensor): Bag of words representations of the training examples.
-            labels (torch.Tensor): Labels corresponding to each training example.
+            features (torch.Tensor): Bag of words representations of the training examples. (Para ada dosumento, un alista de BoW: ej [[0,1,2],[2,3,0]] la palabra 0 aparece 0 veces en el 1º la segunda word aparece 1 en el 1º...)
+            labels (torch.Tensor): Labels corresponding to each training example. (labels de cada docuemnto de arriba)
             delta (float): Smoothing parameter for Laplace smoothing.
 
         Returns:
             Dict[int, torch.Tensor]: Conditional probabilities of each word for each class.
         """
         # TODO: Estimate conditional probabilities for the words in features and apply smoothing
-        class_word_counts: Dict[int, torch.Tensor] = None
+        class_word_counts: Dict[int, torch.Tensor] = dict()
+        unique_labels: torch.Tensor = torch.unique(labels)
+
+        for label in unique_labels:
+            class_mask: torch.Tensor = (labels == label)
+            class_features: torch.Tensor = features[class_mask] # documents of class c
+
+            word_counts_in_class:int = class_features.sum(dim=0) # suma de palabras por clases
+            total_words_in_class: int = word_counts_in_class.sum() # num total de words in clase c
+
+            probs: torch.Tensor = (word_counts_in_class + delta)/(total_words_in_class + delta*self.vocab_size)
+            class_word_counts[label] = probs
 
         return class_word_counts
+
 
     def estimate_class_posteriors(
         self,
