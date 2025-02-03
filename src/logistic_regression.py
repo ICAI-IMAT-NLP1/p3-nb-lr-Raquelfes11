@@ -44,13 +44,13 @@ class LogisticRegression:
 
             for i in range(features.shape[0]):
                 prediction: torch.Tensor = self.predict(features[i])
-                error: int = prediction - labels[i]
+                error: torch.Tensor = prediction - labels[i]
 
-                grad_weights += error*features[i]
+                grad_weights += error * features[i]
                 grad_bias += error
 
-            weights -= learning_rate*grad_weights / features.shape[0]
-            bias -= learning_rate*grad_bias / features.shape[0]
+            weights -= learning_rate * grad_weights / features.shape[0]
+            bias -= learning_rate * grad_bias / features.shape[0]
 
             self._weights[:-1] = weights
             self._weights[-1] = bias
@@ -112,7 +112,7 @@ class LogisticRegression:
         """
         torch.manual_seed(random_state)
         
-        params: torch.Tensor = torch.rand(dim+1)
+        params: torch.Tensor = torch.zeros(dim+1)
         return params
 
     @staticmethod
