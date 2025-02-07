@@ -21,15 +21,17 @@ def read_sentiment_examples(infile: str) -> List[SentimentExample]:
     # TODO: Open the file, go line by line, separate sentence and label, tokenize the sentence and create SentimentExample object
     examples: List[SentimentExample] = list()
 
-    with open(infile,"r") as file:
+    with open(infile,"r", encoding= "utf-8") as file: 
         lines: List[str] = file.read().splitlines() 
 
-    for line in lines:
-        info : List[str] = line.split("\t")
-        words: List[str] = tokenize(info[0])
-        label: int = int(info[-1])
-        examples.append(SentimentExample(words,label))
-
+        for line in lines:
+            info : List[str] = line.split("\t")
+            try:
+                words: List[str] = tokenize(info[0])
+                label: int = int(info[-1])
+                examples.append(SentimentExample(words,label))
+            except:
+                continue
     return examples
 
 
@@ -75,13 +77,19 @@ def bag_of_words(
         torch.Tensor: A tensor representing the bag-of-words vector.
     """
     # TODO: Converts list of words into BoW, take into account the binary vs full
+    if binary:
+        words_in_text: set = set(text) 
+    else: 
+        words_in_text: set = text
+
     bow: torch.Tensor = torch.zeros(len(vocab))
-    for word in text:
-        if binary:
-            if word in vocab and bow[vocab[word]] != 1:
-                bow[vocab[word]] = 1
-        else:
-            if word in vocab:
-                bow[vocab[word]] += 1
+
+    for word in words_in_text:
+        if word in vocab:
+            index = vocab[word]
+            if binary:
+                bow[index] = 1  
+            else:
+                bow[index] += 1  
 
     return bow
