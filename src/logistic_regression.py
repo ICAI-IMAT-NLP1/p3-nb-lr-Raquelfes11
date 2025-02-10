@@ -35,11 +35,9 @@ class LogisticRegression:
         # TODO: Implement gradient-descent algorithm to optimize logistic regression weights
         params:torch.Tensor = self.initialize_parameters(features.shape[1],self.random_state)
         self.weights = params
-        bias:torch.Tensor = params[-1]
-        weights:torch.Tensor = params[:-1]
 
         for epoch in range(epochs):
-            grad_weights: torch.Tensor = torch.zeros_like(weights)
+            grad_weights: torch.Tensor = torch.zeros_like(params[:-1])
             grad_bias:int = 0
 
             predictions: torch.Tensor = self.predict_proba(features)
