@@ -38,24 +38,18 @@ class LogisticRegression:
         bias:torch.Tensor = params[-1]
         weights:torch.Tensor = params[:-1]
 
-        grad_weights = torch.zeros_like(weights)
-        grad_bias = 0
-
         for epoch in range(epochs):
+            grad_weights: torch.Tensor = torch.zeros_like(weights)
+            grad_bias:int = 0
 
-            for i in range(features.shape[0]):
-                prediction: torch.Tensor = self.predict_proba(features[i])
-                error: torch.Tensor = prediction - labels[i]
+            predictions: torch.Tensor = self.predict_proba(features)
+            error: torch.Tensor = predictions - labels
 
-                grad_weights += error * features[i] / features.shape[0]
-                grad_bias += error.mean()
+            grad_weights: torch.Tensor = torch.matmul(features.T, error) / len(labels)
+            grad_bias:int = torch.sum(error)
 
-            weights -= learning_rate * grad_weights / features.shape[0]
-            bias -= learning_rate * grad_bias / features.shape[0]
-
-            self.weights[:-1] = weights
-            self.weights[-1] = bias
-        return 
+            self.weights[:-1] -= learning_rate * grad_weights 
+            self.weights[-1] -= learning_rate * grad_bias 
 
     def predict(self, features: torch.Tensor, cutoff: float = 0.5) -> torch.Tensor:
         """
