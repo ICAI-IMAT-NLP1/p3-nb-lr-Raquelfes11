@@ -28,7 +28,7 @@ def main():
     # Train Logistic Regression model
     print("Training Logistic Regression model...")
     lr_model = LogisticRegression(random_state=42)
-    lr_model.fit(train_features, train_labels, learning_rate=0.1, epochs=1000)
+    lr_model.fit(train_features, train_labels, learning_rate=0.1, epochs=2000)
 
     # Load test data
     test_examples = read_sentiment_examples("data/test.txt")
